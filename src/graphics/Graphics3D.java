@@ -106,7 +106,7 @@ public class Graphics3D {
 			for(int y = 0; y < level.getHeight(); y++)
 				for(int z = 0; z < level.getDepth(); z++)
 					for(Asset a: level.getAssetList(x, y, z))
-						renderModel(a.getModelListHandle(), new Vector3f(x*size, y*size, z*size), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f, 1.0f, 1.0f));
+						renderModel(a.getModelListHandle(), new Vector3f(x*size, y*size, z*size), new Vector3f(0.0f, 0.0f, a.getzRot()), new Vector3f(1.0f, 1.0f, 1.0f));
 		for(Entity e : Globals.entities)
 			renderModel(e.getAsset().getModelListHandle(), new Vector3f(e.getxPos(), e.getyPos(), e.getzPos()), e.getRotation(), new Vector3f(1.0f, 1.0f, 1.0f));
 	}

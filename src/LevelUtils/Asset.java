@@ -43,6 +43,7 @@ public class Asset implements Serializable{
 	private int modelListHandle;
 	private Model model;
 	private String assetName;
+	private float zRot;
 	
 	private int health;
 	public Invoke<Boolean, Entity> onWalkOn;
@@ -59,7 +60,8 @@ public class Asset implements Serializable{
 				Object o = inStream.readObject();
 				if(o instanceof Asset){
 					a = (Asset)o;
-					a.setupModelList(a.model.getModelName(), a.model.getMtlPath());
+					if(a.model != null)
+						a.setupModelList(a.model.getModelName(), a.model.getMtlPath());
 				}
 				inStream.close();
 			} catch (FileNotFoundException e) {
@@ -172,5 +174,13 @@ public class Asset implements Serializable{
 
 	public void setWalkable(boolean walkable) {
 		this.walkable = walkable;
+	}
+
+	public float getzRot() {
+		return zRot;
+	}
+
+	public void setzRot(float zRot) {
+		this.zRot = zRot;
 	}
 }
