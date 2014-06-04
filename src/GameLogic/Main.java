@@ -1,7 +1,7 @@
 package GameLogic;
 
 import utilities.Globals;
-import utilities.Invoke;
+import utilities.InvokeWrapper;
 import LevelUtils.Asset;
 import LevelUtils.Level;
 import graphics.Graphics3D;
@@ -14,6 +14,10 @@ public class Main {
 		charlie.getAsset().putModel("res/meshes/Characters/Charlie.obj", "res/meshes/Characters/Charlie.mtl");
 		charlie.saveEntity();
 		Globals.entities.add(charlie);
+		
+		Entity npcCharlie = Entity.loadEntity("res/assets/Characters/Charlie.entity","res/assets/Characters/Charlie.asset");
+		npcCharlie.setPos(10, 15);
+		Globals.entities.add(npcCharlie);
 		
 		Asset barrel = Asset.loadAsset("res/assets/Misc/Barrel.asset");
 		barrel.setWalkable(false);
@@ -35,6 +39,24 @@ public class Main {
 		pillar.putModel("res/meshes/Walls/Pillar.obj", "res/meshes/Walls/Pillar.mtl");
 		pillar.setWalkable(false);
 		pillar.saveAsset();
+		Asset stoneStair = Asset.loadAsset("res/assets/Misc/StoneStair.asset");
+		stoneStair.putModel("res/meshes/Misc/StoneStair.obj", "res/meshes/Misc/StoneStair.mtl");
+		stoneStair.setWalkable(true);
+		stoneStair.onWalkOn = new InvokeWrapper(){
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 891590712715270331L;
+
+			public Boolean call(Entity data) {
+				data.setzPos(1f);
+				System.out.println(data.getzPos());
+				return true;
+			}
+		};
+		stoneStair.setzRot(90);
+		stoneStair.saveAsset();
+		
 		for(int x = 0; x < Globals.activeLevel.getWidth(); x++)
 			for(int y = 0; y < Globals.activeLevel.getHeight(); y++){
 				Globals.activeLevel.addAsset(x, y, 0, sand);
@@ -58,6 +80,7 @@ public class Main {
 		Globals.activeLevel.addAsset(3, 3, 1, barrel);
 		Globals.activeLevel.addAsset(3, 4, 1, barrel);
 		Globals.activeLevel.addAsset(3, 5, 0, barrel);
+		Globals.activeLevel.addAsset(4, 2, 0, stoneStair);
 		Globals.activeLevel.saveLevel();
 		g.getCamera().setEntityCameraLock(charlie);
 		g.start();
