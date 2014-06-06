@@ -1,8 +1,8 @@
 package utilities;
 
-import java.io.Serializable;
+import gameLogic.Entity;
 
-import GameLogic.Entity;
+import java.io.Serializable;
 
 public abstract class InvokeWrapper implements Serializable, Invoke<Boolean, Entity>{
 
@@ -10,5 +10,11 @@ public abstract class InvokeWrapper implements Serializable, Invoke<Boolean, Ent
 	 * 
 	 */
 	private static final long serialVersionUID = -943407497692036388L;
+
+	@Override
+	public Boolean call(Entity data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }

@@ -4,6 +4,7 @@ import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.toRadians;
 import static org.lwjgl.opengl.GL11.*;
+import gameLogic.Entity;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -13,7 +14,6 @@ import static org.lwjgl.util.glu.GLU.*;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
-import GameLogic.Entity;
 import utilities.Globals;
 
 /**

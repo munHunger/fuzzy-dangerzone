@@ -1,9 +1,10 @@
 package utilities;
 
+import gameLogic.Entity;
+
 import java.util.ArrayList;
 
-import GameLogic.Entity;
-import LevelUtils.Level;
+import levelUtils.Level;
 /**
  * Globals
  * @author Marcus

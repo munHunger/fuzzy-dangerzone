@@ -10,6 +10,9 @@ import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
+import levelUtils.Asset;
+import levelUtils.Level;
+import gameLogic.Entity;
 import graphics.utilities.Camera;
 
 import org.lwjgl.LWJGLException;
@@ -18,9 +21,6 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.util.vector.Vector3f;
 
-import GameLogic.Entity;
-import LevelUtils.Asset;
-import LevelUtils.Level;
 import static org.lwjgl.opengl.GL11.*;
 import utilities.Globals;
 

@@ -1,9 +1,11 @@
-package GameLogic;
+package gameLogic;
 
+import java.io.Serializable;
+
+import levelUtils.Asset;
+import levelUtils.Level;
 import utilities.Globals;
 import utilities.InvokeWrapper;
-import LevelUtils.Asset;
-import LevelUtils.Level;
 import graphics.Graphics3D;
 
 public class Main {
@@ -39,21 +41,23 @@ public class Main {
 		pillar.putModel("res/meshes/Walls/Pillar.obj", "res/meshes/Walls/Pillar.mtl");
 		pillar.setWalkable(false);
 		pillar.saveAsset();
-		Asset stoneStair = Asset.loadAsset("res/assets/Misc/StoneStair.asset");
-		stoneStair.putModel("res/meshes/Misc/StoneStair.obj", "res/meshes/Misc/StoneStair.mtl");
-		stoneStair.setWalkable(true);
-		stoneStair.onWalkOn = new InvokeWrapper(){
+		
+		class onWalkOn extends InvokeWrapper implements Serializable{
 			/**
 			 * 
 			 */
-			private static final long serialVersionUID = 891590712715270331L;
+			private static final long serialVersionUID = 1L;
 
+			@Override
 			public Boolean call(Entity data) {
-				data.setzPos(1f);
-				System.out.println(data.getzPos());
-				return true;
+				System.out.println(data.getxPos());
+				return null;
 			}
-		};
+		}
+		Asset stoneStair = Asset.loadAsset("res/assets/Misc/StoneStair.asset");
+		stoneStair.putModel("res/meshes/Misc/StoneStair.obj", "res/meshes/Misc/StoneStair.mtl");
+		stoneStair.setWalkable(true);
+		stoneStair.onWalkOn = new onWalkOn();
 		stoneStair.setzRot(90);
 		stoneStair.saveAsset();
 		

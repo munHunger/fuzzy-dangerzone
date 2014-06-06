@@ -1,4 +1,4 @@
-package LevelUtils;
+package levelUtils;
 
 import static org.lwjgl.opengl.GL11.GL_COMPILE;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
@@ -10,6 +10,7 @@ import static org.lwjgl.opengl.GL11.glGenLists;
 import static org.lwjgl.opengl.GL11.glNewList;
 import static org.lwjgl.opengl.GL11.glNormal3f;
 import static org.lwjgl.opengl.GL11.glVertex3f;
+import gameLogic.Entity;
 import graphics.utilities.Face;
 import graphics.utilities.Model;
 import graphics.utilities.ModelPart;
@@ -26,7 +27,6 @@ import java.io.Serializable;
 
 import org.lwjgl.util.vector.Vector3f;
 
-import GameLogic.Entity;
 import utilities.Invoke;
 
 /**
