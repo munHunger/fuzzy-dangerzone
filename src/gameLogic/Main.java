@@ -5,6 +5,7 @@ import java.io.Serializable;
 import levelUtils.Asset;
 import levelUtils.Level;
 import utilities.Globals;
+import utilities.Invoke;
 import utilities.InvokeWrapper;
 import graphics.Graphics3D;
 
@@ -37,27 +38,15 @@ public class Main {
 		verticalRailing.setWalkable(false);
 		verticalRailing.setzRot(90f);
 		verticalRailing.saveAsset();
+		
 		Asset pillar = Asset.loadAsset("res/assets/Walls/Pillar.asset");
 		pillar.putModel("res/meshes/Walls/Pillar.obj", "res/meshes/Walls/Pillar.mtl");
 		pillar.setWalkable(false);
 		pillar.saveAsset();
 		
-		class onWalkOn extends InvokeWrapper implements Serializable{
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public Boolean call(Entity data) {
-				System.out.println(data.getxPos());
-				return null;
-			}
-		}
 		Asset stoneStair = Asset.loadAsset("res/assets/Misc/StoneStair.asset");
 		stoneStair.putModel("res/meshes/Misc/StoneStair.obj", "res/meshes/Misc/StoneStair.mtl");
 		stoneStair.setWalkable(true);
-		stoneStair.onWalkOn = new onWalkOn();
 		stoneStair.setzRot(90);
 		stoneStair.saveAsset();
 		
