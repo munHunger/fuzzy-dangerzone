@@ -46,9 +46,9 @@ public class Asset implements Serializable{
 	private float zRot;
 	
 	private int health;
-	public Invoke<Boolean, Entity> onWalkOn;
-	public Invoke<Boolean, Entity> onWalkOff;
-	public Invoke<Boolean, Entity> onHit;
+	public String onWalkOn;
+	public String onWalkOff;
+	public String onHit;
 	private boolean walkable;
 
 	public static Asset loadAsset(String assetName){
@@ -96,6 +96,16 @@ public class Asset implements Serializable{
 	public Asset(String assetName){
 		this.assetName = assetName;
 		//modelListHandle = setupModelList(assetName + ".obj");
+	}
+	
+	public void loadModel(String modelName, String mtlPath){
+		try {
+			model = OBJLoader.loadModel(new File(modelName), new File(mtlPath));
+			model.setModelName(modelName);
+			model.setMtlPath(mtlPath);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void putModel(String modelName, String mtlPath){

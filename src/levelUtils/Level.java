@@ -146,6 +146,7 @@ public class Level implements Serializable{
 	}
 
 	public void walkAction(int prevX, int prevY, int x, int y, int z, Entity e) {
+		/*
 		for(Asset a : mapAssets[x][y][z])
 			if(a.onWalkOn != null)
 				a.onWalkOn.call(e);
@@ -158,5 +159,6 @@ public class Level implements Serializable{
 		for(Asset a : mapAssets[x+1][y+1][z])
 			if(a.onWalkOn != null)
 				a.onWalkOn.call(e);
+		*/
 	}
 }
