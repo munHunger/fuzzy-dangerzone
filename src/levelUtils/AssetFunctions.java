@@ -17,8 +17,9 @@ public class AssetFunctions {
 	
 	public static String[] getKeyList(){
 		Set<String> keySet = functionMap.keySet();
-		String toReturn[] = new String[keySet.size()];
-		int i = 0;
+		String toReturn[] = new String[keySet.size()+1];
+		toReturn[0] = "NULL";
+		int i = 1;
 		for(String s : keySet){
 			toReturn[i] = s;
 			i++;
@@ -33,6 +34,5 @@ public class AssetFunctions {
 				return true;
 			}
 		});
-		functionMap.put("NULL", null);
 	}
 }
