@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import levelUtils.Asset;
 
@@ -28,12 +29,16 @@ public class Entity implements Serializable{
 	private float prevyPos;
 	private float zRot;
 	private float zPos;
-	private Asset asset;
+	private ArrayList<Asset> assets = new ArrayList<>();
 
 	private String entityName;
-	public Entity(String entityName, String assetName) {
+	public Entity(String entityName, ArrayList<String> assetNames) {
 		this.entityName = entityName;
-		asset = new Asset(assetName);
+		for(String assetName : assetNames){
+			Asset a = Asset.loadAsset(assetName);
+			assets.add(a);
+			a.setupAsset();
+		}
 	}
 	
 	public float getxPos() {
@@ -67,15 +72,15 @@ public class Entity implements Serializable{
 		return true;
 	}
 
-	public Asset getAsset() {
-		return asset;
+	public ArrayList<Asset> getAssets() {
+		return assets;
 	}
 
-	public void setAsset(Asset asset) {
-		this.asset = asset;
+	public void setAssets(ArrayList<Asset> assets) {
+		this.assets = assets;
 	}
 
-	public static Entity loadEntity(String entityName, String assetName) {
+	public static Entity loadEntity(String entityName, ArrayList<String> assetNames) {
 		Entity entity = null;
 		File f = new File(entityName);
 		if(f.exists()){
@@ -84,7 +89,8 @@ public class Entity implements Serializable{
 				Object o = inStream.readObject();
 				if(o instanceof Entity){
 					entity = (Entity)o;
-					entity.asset.setupAsset();
+					for(Asset a : entity.assets)
+						a.setupAsset();
 				}
 				inStream.close();
 			} catch (FileNotFoundException e) {
@@ -99,7 +105,7 @@ public class Entity implements Serializable{
 			}
 		}
 		if(entity == null)
-			entity = new Entity(entityName, assetName);
+			entity = new Entity(entityName, assetNames);
 		return entity;
 	}
 
