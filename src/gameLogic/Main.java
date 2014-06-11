@@ -1,6 +1,7 @@
 package gameLogic;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import levelUtils.Asset;
 import levelUtils.Level;
@@ -30,8 +31,9 @@ public class Main {
 		Asset barrel = Asset.loadAsset("res/assets/Misc/Barrel.asset");
 		barrel.setPos(5, 5, 0);
 		Globals.activeLevel.addAsset(barrel);
-		
 		Level level = Globals.activeLevel;
+		List<Asset> l = level.getAssetList(0, 0, 0, 12, 12, 9.99f);
+		System.out.println(l.size());
 		g.start(null);
 	}
 	

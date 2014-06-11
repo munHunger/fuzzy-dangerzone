@@ -82,7 +82,7 @@ public class Octree<E> implements Serializable{
 			private El element;
 			private float xScale, yScale, zScale;
 			private float x, y, z;
-			public InsertObject(El e, float xScale, float yScale, float zScale, float x, float y, float z){
+			public InsertObject(El e, float x, float y, float z, float xScale, float yScale, float zScale){
 				this.element = e;
 				this.xScale = xScale;
 				this.yScale = yScale;
@@ -127,8 +127,8 @@ public class Octree<E> implements Serializable{
 		
 		private boolean interSecting(InsertObject<Elem> e, float ex, float ey, float ez, float exScale, float eyScale, float ezScale){
 			return ((ex >= e.x && ex <= e.x+e.xScale) || (ex+exScale >= e.x && ex+exScale <= e.x+e.xScale) || (ex <= e.x && ex+exScale > e.x)) && 
-					((ey >= e.y && ey <= e.y+e.yScale) || (ey+eyScale >= e.y && ey+eyScale <= e.y+e.yScale) || (ex <= e.x && ex+exScale > e.x)) && 
-					((ez >= e.z && ez <= e.z+e.zScale) || (ez+ezScale >= e.z && ez+ezScale <= e.z+e.zScale) || (ex <= e.x && ex+exScale > e.x));
+					((ey >= e.y && ey <= e.y+e.yScale) || (ey+eyScale >= e.y && ey+eyScale <= e.y+e.yScale) || (ey <= e.y && ey+eyScale > e.y)) && 
+					((ez >= e.z && ez <= e.z+e.zScale) || (ez+ezScale >= e.z && ez+ezScale <= e.z+e.zScale) || (ez <= e.z && ez+ezScale > e.z));
 		}
 
 		public ArrayList<Elem> query(ArrayList<Elem> accumulator, float ex, float ey, float ez, float exScale,
@@ -143,28 +143,28 @@ public class Octree<E> implements Serializable{
 				if(interSecting(io, ex, ey, ez, exScale, eyScale, ezScale))
 					accumulator.add(io.element);
 			
-			if(children.get(LOWER_BOTTOM_LEFT) != null && interSecting(new InsertObject<Elem>(null, x, y, z, xScale/2, yScale/2, zScale/2), ex, ey, ez, exScale, eyScale, ezScale))
+			if(children.get(LOWER_BOTTOM_LEFT) != null && interSecting(new InsertObject<Elem>(null, x, y, z, xScale/2f, yScale/2f, zScale/2f), ex, ey, ez, exScale, eyScale, ezScale))
 				accumulator = children.get(LOWER_BOTTOM_LEFT).query(accumulator, ex, ey, ez, exScale, eyScale, ezScale);
 			
-			if(children.get(LOWER_TOP_LEFT) != null && interSecting(new InsertObject<Elem>(null, x, y, zLine, xScale/2, yScale/2, zScale/2), ex, ey, ez, exScale, eyScale, ezScale))
+			if(children.get(LOWER_TOP_LEFT) != null && interSecting(new InsertObject<Elem>(null, x, y, zLine, xScale/2f, yScale/2f, zScale/2f), ex, ey, ez, exScale, eyScale, ezScale))
 				accumulator = children.get(LOWER_TOP_LEFT).query(accumulator, ex, ey, ez, exScale, eyScale, ezScale);
 			
-			if(children.get(UPPER_BOTTOM_LEFT) != null && interSecting(new InsertObject<Elem>(null, x, yLine, z, xScale/2, yScale/2, zScale/2), ex, ey, ez, exScale, eyScale, ezScale))
+			if(children.get(UPPER_BOTTOM_LEFT) != null && interSecting(new InsertObject<Elem>(null, x, yLine, z, xScale/2f, yScale/2f, zScale/2f), ex, ey, ez, exScale, eyScale, ezScale))
 				accumulator = children.get(UPPER_BOTTOM_LEFT).query(accumulator, ex, ey, ez, exScale, eyScale, ezScale);
 			
-			if(children.get(UPPER_TOP_LEFT) != null && interSecting(new InsertObject<Elem>(null, x, yLine, zLine, xScale/2, yScale/2, zScale/2), ex, ey, ez, exScale, eyScale, ezScale))
+			if(children.get(UPPER_TOP_LEFT) != null && interSecting(new InsertObject<Elem>(null, x, yLine, zLine, xScale/2f, yScale/2f, zScale/2f), ex, ey, ez, exScale, eyScale, ezScale))
 				accumulator = children.get(UPPER_TOP_LEFT).query(accumulator, ex, ey, ez, exScale, eyScale, ezScale);
 
-			if(children.get(LOWER_BOTTOM_RIGHT) != null && interSecting(new InsertObject<Elem>(null, xLine, y, z, xScale/2, yScale/2, zScale/2), ex, ey, ez, exScale, eyScale, ezScale))
+			if(children.get(LOWER_BOTTOM_RIGHT) != null && interSecting(new InsertObject<Elem>(null, xLine, y, z, xScale/2f, yScale/2f, zScale/2f), ex, ey, ez, exScale, eyScale, ezScale))
 				accumulator = children.get(LOWER_BOTTOM_RIGHT).query(accumulator, ex, ey, ez, exScale, eyScale, ezScale);
 			
-			if(children.get(LOWER_TOP_RIGHT) != null && interSecting(new InsertObject<Elem>(null, xLine, y, zLine, xScale/2, yScale/2, zScale/2), ex, ey, ez, exScale, eyScale, ezScale))
+			if(children.get(LOWER_TOP_RIGHT) != null && interSecting(new InsertObject<Elem>(null, xLine, y, zLine, xScale/2f, yScale/2f, zScale/2f), ex, ey, ez, exScale, eyScale, ezScale))
 				accumulator = children.get(LOWER_TOP_RIGHT).query(accumulator, ex, ey, ez, exScale, eyScale, ezScale);
 			
-			if(children.get(UPPER_BOTTOM_RIGHT) != null && interSecting(new InsertObject<Elem>(null, xLine, yLine, z, xScale/2, yScale/2, zScale/2), ex, ey, ez, exScale, eyScale, ezScale))
+			if(children.get(UPPER_BOTTOM_RIGHT) != null && interSecting(new InsertObject<Elem>(null, xLine, yLine, z, xScale/2f, yScale/2f, zScale/2f), ex, ey, ez, exScale, eyScale, ezScale))
 				accumulator = children.get(UPPER_BOTTOM_RIGHT).query(accumulator, ex, ey, ez, exScale, eyScale, ezScale);
 			
-			if(children.get(UPPER_TOP_RIGHT) != null && interSecting(new InsertObject<Elem>(null, xLine, yLine, zLine, xScale/2, yScale/2, zScale/2), ex, ey, ez, exScale, eyScale, ezScale))
+			if(children.get(UPPER_TOP_RIGHT) != null && interSecting(new InsertObject<Elem>(null, xLine, yLine, zLine, xScale/2f, yScale/2f, zScale/2f), ex, ey, ez, exScale, eyScale, ezScale))
 				accumulator = children.get(UPPER_TOP_RIGHT).query(accumulator, ex, ey, ez, exScale, eyScale, ezScale);
 
 			return accumulator;
@@ -176,7 +176,7 @@ public class Octree<E> implements Serializable{
 					if (ez <= zLine) {
 						TreeNode<Elem> node = children.get(LOWER_BOTTOM_LEFT);
 						if (node == null) {
-							node = new TreeNode<Elem>(x, y, z, xScale/2, yScale/2, zScale/2);
+							node = new TreeNode<Elem>(x, y, z, xScale/2f, yScale/2f, zScale/2f);
 							children.set(LOWER_BOTTOM_LEFT, node);
 						}
 						return node;
@@ -185,7 +185,7 @@ public class Octree<E> implements Serializable{
 					else {
 						TreeNode<Elem> node = children.get(LOWER_TOP_LEFT);
 						if (node == null) {
-							node = new TreeNode<Elem>(x, y, zLine, xScale/2, yScale/2, zScale/2);
+							node = new TreeNode<Elem>(x, y, zLine, xScale/2f, yScale/2f, zScale/2f);
 							children.set(LOWER_TOP_LEFT, node);
 						}
 						return node;
@@ -195,7 +195,7 @@ public class Octree<E> implements Serializable{
 					if (ez <= zLine) {
 						TreeNode<Elem> node = children.get(UPPER_BOTTOM_LEFT);
 						if (node == null) {
-							node = new TreeNode<Elem>(x, yLine, z, xScale/2, yScale/2, zScale/2);
+							node = new TreeNode<Elem>(x, yLine, z, xScale/2f, yScale/2f, zScale/2f);
 							children.set(UPPER_BOTTOM_LEFT, node);
 						}
 						return node;
@@ -203,7 +203,7 @@ public class Octree<E> implements Serializable{
 					else {
 						TreeNode<Elem> node = children.get(UPPER_TOP_LEFT);
 						if (node == null) {
-							node = new TreeNode<Elem>(x, yLine, zLine, xScale/2, yScale/2, zScale/2);
+							node = new TreeNode<Elem>(x, yLine, zLine, xScale/2f, yScale/2f, zScale/2f);
 							children.set(UPPER_TOP_LEFT, node);
 						}
 						return node;
@@ -215,7 +215,7 @@ public class Octree<E> implements Serializable{
 					if (ez <= zLine) {
 						TreeNode<Elem> node = children.get(LOWER_BOTTOM_RIGHT);
 						if (node == null) {
-							node = new TreeNode<Elem>(xLine, y, z, xScale/2, yScale/2, zScale/2);
+							node = new TreeNode<Elem>(xLine, y, z, xScale/2f, yScale/2f, zScale/2f);
 							children.set(LOWER_BOTTOM_RIGHT, node);
 						}
 						return node;
@@ -223,7 +223,7 @@ public class Octree<E> implements Serializable{
 					else {
 						TreeNode<Elem> node = children.get(LOWER_TOP_RIGHT);
 						if (node == null) {
-							node = new TreeNode<Elem>(xLine, y, zLine, xScale/2, yScale/2, zScale/2);
+							node = new TreeNode<Elem>(xLine, y, zLine, xScale/2f, yScale/2f, zScale/2f);
 							children.set(LOWER_TOP_RIGHT, node);
 						}
 						return node;
@@ -233,7 +233,7 @@ public class Octree<E> implements Serializable{
 					if (ez <= zLine) {
 						TreeNode<Elem> node = children.get(UPPER_BOTTOM_RIGHT);
 						if (node == null) {
-							node = new TreeNode<Elem>(xLine, yLine, z, xScale/2, yScale/2, zScale/2);
+							node = new TreeNode<Elem>(xLine, yLine, z, xScale/2f, yScale/2f, zScale/2f);
 							children.set(UPPER_BOTTOM_RIGHT, node);
 						}
 						return node;
@@ -241,7 +241,7 @@ public class Octree<E> implements Serializable{
 					else {
 						TreeNode<Elem> node = children.get(UPPER_TOP_RIGHT);
 						if (node == null) {
-							node = new TreeNode<Elem>(xLine, yLine, zLine, xScale/2, yScale/2, zScale/2);
+							node = new TreeNode<Elem>(xLine, yLine, zLine, xScale/2f, yScale/2f, zScale/2f);
 							children.set(UPPER_TOP_RIGHT, node);
 						}
 						return node;
@@ -254,13 +254,13 @@ public class Octree<E> implements Serializable{
 				float exScale, float eyScale, float ezScale) {
 
 			if (ex <= xLine && ex + exScale > xLine) {
-				xList.add(new InsertObject<Elem>(e, exScale, eyScale, ezScale, ex, ey, ez));
+				xList.add(new InsertObject<Elem>(e, ex, ey, ez, exScale, eyScale, ezScale));
 			} 
 			else if (ey <= yLine && ey + eyScale > yLine) {
-				yList.add(new InsertObject<Elem>(e, exScale, eyScale, ezScale, ex, ey, ez));
+				yList.add(new InsertObject<Elem>(e, ex, ey, ez, exScale, eyScale, ezScale));
 			} 
 			else if (ez <= zLine && ez + ezScale > zLine) {
-				zList.add(new InsertObject<Elem>(e, exScale, eyScale, ezScale, ex, ey, ez));
+				zList.add(new InsertObject<Elem>(e, ex, ey, ez, exScale, eyScale, ezScale));
 			} 
 			else {
 				TreeNode<Elem> nextNode = findOctant(ex, ey, ez);

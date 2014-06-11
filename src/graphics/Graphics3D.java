@@ -136,35 +136,41 @@ public class Graphics3D {
 		glLineWidth(5);
 		glBegin(GL_LINES);{ //Bounding box
 			{//Bottom
-				glColor3f(0, 10, 0);
+				glColor3f(10, 0, 0);
 				glVertex3f(x, y, z);
 				glVertex3f(xScale, y, z);
 
+				glColor3f(0, 10, 0);
 				glVertex3f(xScale, y, z);
 				glVertex3f(xScale, yScale, z);
 
+				glColor3f(10, 0, 0);
 				glVertex3f(xScale, yScale, z);
 				glVertex3f(x, yScale, z);
 
+				glColor3f(0, 10, 0);
 				glVertex3f(x, yScale, z);
 				glVertex3f(x, y, z);
 			}
 			{//Top
-				glColor3f(0, 0, 10);
+				glColor3f(10, 0, 0);
 				glVertex3f(x, y, zScale);
 				glVertex3f(xScale, y, zScale);
 
+				glColor3f(0, 10, 0);
 				glVertex3f(xScale, y, zScale);
 				glVertex3f(xScale, yScale, zScale);
 
+				glColor3f(10, 0, 0);
 				glVertex3f(xScale, yScale, zScale);
 				glVertex3f(x, yScale, zScale);
 
+				glColor3f(0, 10, 0);
 				glVertex3f(x, yScale, zScale);
 				glVertex3f(x, y, zScale);
 			}
 			{//Sides
-				glColor3f(10, 0, 0);
+				glColor3f(0, 0, 10);
 				glVertex3f(x, y, z);
 				glVertex3f(x, y, zScale);
 
