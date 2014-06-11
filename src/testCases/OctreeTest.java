@@ -39,7 +39,7 @@ public class OctreeTest {
 		l = tree.query(0f,0f,0f, 0.5f,0.5f,0.5f);
 		assertEquals(0, l.size());
 		tree.insert(2, 1f, 2f, 2f, 3f, 2f, 1f);
-		l = tree.query(1f,1f,1f, 2f,2f,2f);
+		l = tree.query(0f,0f,0f, 4.9f,4.9f,4.9f);
 		assertEquals(2, l.size());
 	}
 }

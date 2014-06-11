@@ -31,9 +31,15 @@ public class Octree<E> {
 		return false;
 	}
 
-	public List<E> query(float x, float y, float z, float width, float height,
-			float depth) {
-		// TODO Auto-generated method stub
+	public List<E> query(float ex, float ey, float ez, float exScale, float eyScale,
+			float ezScale) {
+		if (contains(ex, ey, ez, exScale, eyScale, ezScale, 0f, 0f, 0f,
+				this.width, this.height, this.depth)) {
+			ArrayList<E> toReturn = new ArrayList<E>();
+			toReturn = root.query(toReturn, ex, ey, ez, exScale, eyScale, ezScale);
+			return toReturn;
+		}
+		System.out.println("Query box out of bounds");
 		return null;
 	}
 
@@ -58,6 +64,20 @@ public class Octree<E> {
 	}
 
 	private class TreeNode<Elem> {
+		private class InsertObject<El>{
+			private El element;
+			private float xScale, yScale, zScale;
+			private float x, y, z;
+			public InsertObject(El e, float xScale, float yScale, float zScale, float x, float y, float z){
+				this.element = e;
+				this.xScale = xScale;
+				this.yScale = yScale;
+				this.zScale = zScale;
+				this.x = x;
+				this.y = y;
+				this.z = z;
+			}
+		}
 		public static final int UPPER_TOP_RIGHT = 0;
 		public static final int UPPER_TOP_LEFT = 1;
 		public static final int UPPER_BOTTOM_RIGHT = 2;
@@ -67,9 +87,9 @@ public class Octree<E> {
 		public static final int LOWER_BOTTOM_RIGHT = 6;
 		public static final int LOWER_BOTTOM_LEFT = 7;
 		private ArrayList<TreeNode<Elem>> children;
-		private ArrayList<Elem> xList = new ArrayList<Elem>();
-		private ArrayList<Elem> yList = new ArrayList<Elem>();
-		private ArrayList<Elem> zList = new ArrayList<Elem>();
+		private ArrayList<InsertObject<Elem>> xList = new ArrayList<>();
+		private ArrayList<InsertObject<Elem>> yList = new ArrayList<>();
+		private ArrayList<InsertObject<Elem>> zList = new ArrayList<>();
 
 		private float xScale, yScale, zScale;
 		private float x, y, z;
@@ -90,6 +110,51 @@ public class Octree<E> {
 			for (int i = 0; i < 8; i++)
 				children.add(null);
 		}
+		
+		private boolean interSecting(InsertObject<Elem> e, float ex, float ey, float ez, float exScale, float eyScale, float ezScale){
+			return ((ex >= e.x && ex <= e.x+e.xScale) || (ex+exScale >= e.x && ex+exScale <= e.x+e.xScale) || (ex <= e.x && ex+exScale > e.x)) && 
+					((ey >= e.y && ey <= e.y+e.yScale) || (ey+eyScale >= e.y && ey+eyScale <= e.y+e.yScale) || (ex <= e.x && ex+exScale > e.x)) && 
+					((ez >= e.z && ez <= e.z+e.zScale) || (ez+ezScale >= e.z && ez+ezScale <= e.z+e.zScale) || (ex <= e.x && ex+exScale > e.x));
+		}
+
+		public ArrayList<Elem> query(ArrayList<Elem> accumulator, float ex, float ey, float ez, float exScale,
+				float eyScale, float ezScale) {
+			for(InsertObject<Elem> io : xList)
+				if(interSecting(io, ex, ey, ez, exScale, eyScale, ezScale))
+					accumulator.add(io.element);
+			for(InsertObject<Elem> io : yList)
+				if(interSecting(io, ex, ey, ez, exScale, eyScale, ezScale))
+					accumulator.add(io.element);
+			for(InsertObject<Elem> io : zList)
+				if(interSecting(io, ex, ey, ez, exScale, eyScale, ezScale))
+					accumulator.add(io.element);
+			
+			if(children.get(LOWER_BOTTOM_LEFT) != null && interSecting(new InsertObject<Elem>(null, x, y, z, xScale/2, yScale/2, zScale/2), ex, ey, ez, exScale, eyScale, ezScale))
+				accumulator = children.get(LOWER_BOTTOM_LEFT).query(accumulator, ex, ey, ez, exScale, eyScale, ezScale);
+			
+			if(children.get(LOWER_TOP_LEFT) != null && interSecting(new InsertObject<Elem>(null, x, y, zLine, xScale/2, yScale/2, zScale/2), ex, ey, ez, exScale, eyScale, ezScale))
+				accumulator = children.get(LOWER_TOP_LEFT).query(accumulator, ex, ey, ez, exScale, eyScale, ezScale);
+			
+			if(children.get(UPPER_BOTTOM_LEFT) != null && interSecting(new InsertObject<Elem>(null, x, yLine, z, xScale/2, yScale/2, zScale/2), ex, ey, ez, exScale, eyScale, ezScale))
+				accumulator = children.get(UPPER_BOTTOM_LEFT).query(accumulator, ex, ey, ez, exScale, eyScale, ezScale);
+			
+			if(children.get(UPPER_TOP_LEFT) != null && interSecting(new InsertObject<Elem>(null, x, yLine, zLine, xScale/2, yScale/2, zScale/2), ex, ey, ez, exScale, eyScale, ezScale))
+				accumulator = children.get(UPPER_TOP_LEFT).query(accumulator, ex, ey, ez, exScale, eyScale, ezScale);
+
+			if(children.get(LOWER_BOTTOM_RIGHT) != null && interSecting(new InsertObject<Elem>(null, xLine, y, z, xScale/2, yScale/2, zScale/2), ex, ey, ez, exScale, eyScale, ezScale))
+				accumulator = children.get(LOWER_BOTTOM_RIGHT).query(accumulator, ex, ey, ez, exScale, eyScale, ezScale);
+			
+			if(children.get(LOWER_TOP_RIGHT) != null && interSecting(new InsertObject<Elem>(null, xLine, y, zLine, xScale/2, yScale/2, zScale/2), ex, ey, ez, exScale, eyScale, ezScale))
+				accumulator = children.get(LOWER_TOP_RIGHT).query(accumulator, ex, ey, ez, exScale, eyScale, ezScale);
+			
+			if(children.get(UPPER_BOTTOM_RIGHT) != null && interSecting(new InsertObject<Elem>(null, xLine, yLine, z, xScale/2, yScale/2, zScale/2), ex, ey, ez, exScale, eyScale, ezScale))
+				accumulator = children.get(UPPER_BOTTOM_RIGHT).query(accumulator, ex, ey, ez, exScale, eyScale, ezScale);
+			
+			if(children.get(UPPER_TOP_RIGHT) != null && interSecting(new InsertObject<Elem>(null, xLine, yLine, zLine, xScale/2, yScale/2, zScale/2), ex, ey, ez, exScale, eyScale, ezScale))
+				accumulator = children.get(UPPER_TOP_RIGHT).query(accumulator, ex, ey, ez, exScale, eyScale, ezScale);
+
+			return accumulator;
+		}
 
 		private TreeNode<Elem> findOctant(float ex, float ey, float ez) {
 			if (ex <= xLine) {
@@ -97,7 +162,7 @@ public class Octree<E> {
 					if (ez <= zLine) {
 						TreeNode<Elem> node = children.get(LOWER_BOTTOM_LEFT);
 						if (node == null) {
-							children.set(LOWER_BOTTOM_LEFT, new TreeNode<Elem>(x, y, z, xLine - x, yLine - y, zLine - z));
+							children.set(LOWER_BOTTOM_LEFT, new TreeNode<Elem>(x, y, z, xScale/2, yScale/2, zScale/2));
 						}
 						return node;
 						
@@ -105,7 +170,7 @@ public class Octree<E> {
 					else {
 						TreeNode<Elem> node = children.get(LOWER_TOP_LEFT);
 						if (node == null) {
-							children.set(LOWER_TOP_LEFT, new TreeNode<Elem>(x, y, zLine, xLine - x, yLine - y, z + zScale));
+							children.set(LOWER_TOP_LEFT, new TreeNode<Elem>(x, y, zLine, xScale/2, yScale/2, zScale/2));
 						}
 						return node;
 					}
@@ -114,14 +179,14 @@ public class Octree<E> {
 					if (ez <= zLine) {
 						TreeNode<Elem> node = children.get(UPPER_BOTTOM_LEFT);
 						if (node == null) {
-							children.set(UPPER_BOTTOM_LEFT, new TreeNode<Elem>(x, yLine, z, xLine - x, y + yScale, zLine - z));
+							children.set(UPPER_BOTTOM_LEFT, new TreeNode<Elem>(x, yLine, z, xScale/2, yScale/2, zScale/2));
 						}
 						return node;
 					} 
 					else {
 						TreeNode<Elem> node = children.get(UPPER_TOP_LEFT);
 						if (node == null) {
-							children.set(UPPER_TOP_LEFT, new TreeNode<Elem>(x, yLine, zLine, xLine - x, y + yScale, z + zScale));
+							children.set(UPPER_TOP_LEFT, new TreeNode<Elem>(x, yLine, zLine, xScale/2, yScale/2, zScale/2));
 						}
 						return node;
 					}
@@ -132,14 +197,14 @@ public class Octree<E> {
 					if (ez <= zLine) {
 						TreeNode<Elem> node = children.get(LOWER_BOTTOM_RIGHT);
 						if (node == null) {
-							children.set(LOWER_BOTTOM_RIGHT, new TreeNode<Elem>(xLine, y, z, x + xScale, yLine - y, zLine - z));
+							children.set(LOWER_BOTTOM_RIGHT, new TreeNode<Elem>(xLine, y, z, xScale/2, yScale/2, zScale/2));
 						}
 						return node;
 					} 
 					else {
 						TreeNode<Elem> node = children.get(LOWER_TOP_RIGHT);
 						if (node == null) {
-							children.set(LOWER_TOP_RIGHT, new TreeNode<Elem>(xLine, y, zLine, x + xScale, yLine - y, z + zScale));
+							children.set(LOWER_TOP_RIGHT, new TreeNode<Elem>(xLine, y, zLine, xScale/2, yScale/2, zScale/2));
 						}
 						return node;
 					}
@@ -148,14 +213,14 @@ public class Octree<E> {
 					if (ez <= zLine) {
 						TreeNode<Elem> node = children.get(UPPER_BOTTOM_RIGHT);
 						if (node == null) {
-							children.set(UPPER_BOTTOM_RIGHT, new TreeNode<Elem>(xLine, yLine, z, x + xScale, y + yScale, zLine - z));
+							children.set(UPPER_BOTTOM_RIGHT, new TreeNode<Elem>(xLine, yLine, z, xScale/2, yScale/2, zScale/2));
 						}
 						return node;
 					} 
 					else {
 						TreeNode<Elem> node = children.get(UPPER_TOP_RIGHT);
 						if (node == null) {
-							children.set(UPPER_TOP_RIGHT, new TreeNode<Elem>(xLine, yLine, zLine, x + xScale, y + yScale, z + zScale));
+							children.set(UPPER_TOP_RIGHT, new TreeNode<Elem>(xLine, yLine, zLine, xScale/2, yScale/2, zScale/2));
 						}
 						return node;
 					}
@@ -167,13 +232,13 @@ public class Octree<E> {
 				float exScale, float eyScale, float ezScale) {
 
 			if (ex <= xLine && ex + exScale > xLine) {
-				xList.add(e);
+				xList.add(new InsertObject<Elem>(e, exScale, eyScale, ezScale, ex, ey, ez));
 			} 
 			else if (ey <= yLine && ey + eyScale > yLine) {
-				yList.add(e);
+				yList.add(new InsertObject<Elem>(e, exScale, eyScale, ezScale, ex, ey, ez));
 			} 
 			else if (ez <= zLine && ez + ezScale > zLine) {
-				zList.add(e);
+				zList.add(new InsertObject<Elem>(e, exScale, eyScale, ezScale, ex, ey, ez));
 			} 
 			else {
 				TreeNode<Elem> nextNode = findOctant(ex, ey, ez);
