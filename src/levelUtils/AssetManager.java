@@ -40,6 +40,7 @@ public class AssetManager extends JFrame{
 	private static final Color buttonColor = new Color(52,63,66);
 	
 	public AssetManager(){
+		super.setAlwaysOnTop(true);
 		super.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		super.setSize(400, 400);
 		AssetCreator assetCreator = new AssetCreator();
@@ -165,7 +166,9 @@ public class AssetManager extends JFrame{
 		}
 		
 		private File getSelectedAsset(){
-			return assets.get(assetList.getSelectedIndex());
+			if(assetList.getSelectedIndex() != -1)
+				return assets.get(assetList.getSelectedIndex());
+			return null;
 		}
 	}
 	

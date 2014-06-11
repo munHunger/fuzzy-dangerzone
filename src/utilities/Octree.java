@@ -1,13 +1,18 @@
 package utilities;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Octree<E> {
+public class Octree<E> implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5915273075946226765L;
 	private float width, height, depth;
 	private int elementCount = 0;
 	private TreeNode<E> root;
-
+	
 	public Octree(float width, float height, float depth) {
 		this.width = width;
 		this.height = height;
@@ -20,11 +25,11 @@ public class Octree<E> {
 	}
 
 	public boolean insert(E e, float ex, float ey, float ez, float exScale,
-			float eyScale, float ezScale) {
-		this.elementCount++;	
+			float eyScale, float ezScale) {	
 
 		if (contains(ex, ey, ez, exScale, eyScale, ezScale, 0f, 0f, 0f,
 				this.width, this.height, this.depth)) {
+			this.elementCount++;
 			root.insert(e, ex, ey, ez, exScale, eyScale, ezScale);
 			return true;
 		}
@@ -63,8 +68,17 @@ public class Octree<E> {
 		return depth;
 	}
 
-	private class TreeNode<Elem> {
-		private class InsertObject<El>{
+	private class TreeNode<Elem> implements Serializable{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 5529800287560124434L;
+
+		private class InsertObject<El> implements Serializable{
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -1511535824876742921L;
 			private El element;
 			private float xScale, yScale, zScale;
 			private float x, y, z;
@@ -162,7 +176,8 @@ public class Octree<E> {
 					if (ez <= zLine) {
 						TreeNode<Elem> node = children.get(LOWER_BOTTOM_LEFT);
 						if (node == null) {
-							children.set(LOWER_BOTTOM_LEFT, new TreeNode<Elem>(x, y, z, xScale/2, yScale/2, zScale/2));
+							node = new TreeNode<Elem>(x, y, z, xScale/2, yScale/2, zScale/2);
+							children.set(LOWER_BOTTOM_LEFT, node);
 						}
 						return node;
 						
@@ -170,7 +185,8 @@ public class Octree<E> {
 					else {
 						TreeNode<Elem> node = children.get(LOWER_TOP_LEFT);
 						if (node == null) {
-							children.set(LOWER_TOP_LEFT, new TreeNode<Elem>(x, y, zLine, xScale/2, yScale/2, zScale/2));
+							node = new TreeNode<Elem>(x, y, zLine, xScale/2, yScale/2, zScale/2);
+							children.set(LOWER_TOP_LEFT, node);
 						}
 						return node;
 					}
@@ -179,14 +195,16 @@ public class Octree<E> {
 					if (ez <= zLine) {
 						TreeNode<Elem> node = children.get(UPPER_BOTTOM_LEFT);
 						if (node == null) {
-							children.set(UPPER_BOTTOM_LEFT, new TreeNode<Elem>(x, yLine, z, xScale/2, yScale/2, zScale/2));
+							node = new TreeNode<Elem>(x, yLine, z, xScale/2, yScale/2, zScale/2);
+							children.set(UPPER_BOTTOM_LEFT, node);
 						}
 						return node;
 					} 
 					else {
 						TreeNode<Elem> node = children.get(UPPER_TOP_LEFT);
 						if (node == null) {
-							children.set(UPPER_TOP_LEFT, new TreeNode<Elem>(x, yLine, zLine, xScale/2, yScale/2, zScale/2));
+							node = new TreeNode<Elem>(x, yLine, zLine, xScale/2, yScale/2, zScale/2);
+							children.set(UPPER_TOP_LEFT, node);
 						}
 						return node;
 					}
@@ -197,14 +215,16 @@ public class Octree<E> {
 					if (ez <= zLine) {
 						TreeNode<Elem> node = children.get(LOWER_BOTTOM_RIGHT);
 						if (node == null) {
-							children.set(LOWER_BOTTOM_RIGHT, new TreeNode<Elem>(xLine, y, z, xScale/2, yScale/2, zScale/2));
+							node = new TreeNode<Elem>(xLine, y, z, xScale/2, yScale/2, zScale/2);
+							children.set(LOWER_BOTTOM_RIGHT, node);
 						}
 						return node;
 					} 
 					else {
 						TreeNode<Elem> node = children.get(LOWER_TOP_RIGHT);
 						if (node == null) {
-							children.set(LOWER_TOP_RIGHT, new TreeNode<Elem>(xLine, y, zLine, xScale/2, yScale/2, zScale/2));
+							node = new TreeNode<Elem>(xLine, y, zLine, xScale/2, yScale/2, zScale/2);
+							children.set(LOWER_TOP_RIGHT, node);
 						}
 						return node;
 					}
@@ -213,14 +233,16 @@ public class Octree<E> {
 					if (ez <= zLine) {
 						TreeNode<Elem> node = children.get(UPPER_BOTTOM_RIGHT);
 						if (node == null) {
-							children.set(UPPER_BOTTOM_RIGHT, new TreeNode<Elem>(xLine, yLine, z, xScale/2, yScale/2, zScale/2));
+							node = new TreeNode<Elem>(xLine, yLine, z, xScale/2, yScale/2, zScale/2);
+							children.set(UPPER_BOTTOM_RIGHT, node);
 						}
 						return node;
 					} 
 					else {
 						TreeNode<Elem> node = children.get(UPPER_TOP_RIGHT);
 						if (node == null) {
-							children.set(UPPER_TOP_RIGHT, new TreeNode<Elem>(xLine, yLine, zLine, xScale/2, yScale/2, zScale/2));
+							node = new TreeNode<Elem>(xLine, yLine, zLine, xScale/2, yScale/2, zScale/2);
+							children.set(UPPER_TOP_RIGHT, node);
 						}
 						return node;
 					}

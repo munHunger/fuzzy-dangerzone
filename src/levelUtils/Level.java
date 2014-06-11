@@ -11,8 +11,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 import utilities.Globals;
+import utilities.Octree;
 
 /**
  * A map is a 3D grid level where each cell in the grid got a modelList and a boolean for walkable.
@@ -30,49 +32,34 @@ public class Level implements Serializable{
 	private int height;
 	private int width;
 	private int depth;
-	private ArrayList<Asset>[][][] mapAssets;
+	private Octree<Asset> mapAssets;
 	private String levelLocation;
 	
 	
-	@SuppressWarnings("unchecked")
 	public Level(String fileLocation, int width, int height, int depth){
 		this.levelLocation = fileLocation;
 		this.width = width;
 		this.height = height;
 		this.setDepth(depth);
-		mapAssets = new ArrayList[width][height][depth];
-		for(int x = 0; x < width; x++)
-			for(int y = 0; y < height; y++)
-				for(int z = 0; z < depth; z++)
-					mapAssets[x][y][z] = new ArrayList<>();
+		mapAssets = new Octree<>(width, height, depth);
 	}
 
 	public Level(String fileLocation){
 		this(fileLocation, 30, 30, 10);
 	}
 	
-	public boolean isWalkable(int x, int y, int z){
-		for(Asset a : mapAssets[x][y][z])
-			if(!a.isWalkable())
-				return false;
-		for(Asset a : mapAssets[x+1][y][z])
-			if(!a.isWalkable())
-				return false;
-		for(Asset a : mapAssets[x][y+1][z])
-			if(!a.isWalkable())
-				return false;
-		for(Asset a : mapAssets[x+1][y+1][z])
-			if(!a.isWalkable())
-				return false;
-		return true;
+	public boolean isWalkable(float x, float y, float z, float xScale, float yScale, float zScale){
+		List<Asset> l = mapAssets.query(x, y, z, xScale, yScale, zScale);
+		return l != null && l.size() == 0;
 	}
 	
-	public ArrayList<Asset> getAssetList(int x, int y, int z){
-		return mapAssets[x][y][z];
+	public ArrayList<Asset> getAssetList(float x, float y, float z, float xScale, float yScale, float zScale){
+		return (ArrayList<Asset>) mapAssets.query(x, y, z, xScale, yScale, zScale);
 	}
 	
-	public void addAsset(int x, int y, int z, Asset a){
-		mapAssets[x][y][z].add(a);
+	public void addAsset(Asset a){
+		mapAssets.insert(a, a.getX()+a.getXSmallScale(), a.getY()+a.getYSmallScale(), a.getZ()+a.getZSmallScale(), 
+				a.getXLargeScale()-a.getXSmallScale(), a.getYLargeScale()-a.getYSmallScale(), a.getZLargeScale()-a.getZSmallScale());
 	}
 	
 	public void saveLevel(){
@@ -83,7 +70,6 @@ public class Level implements Serializable{
 			outStream.writeObject(this);
 			outStream.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -138,11 +124,8 @@ public class Level implements Serializable{
 	}
 
 	private void loadAssets() {
-		for(int x = 0; x < width; x++)
-			for(int y = 0; y < height; y++)
-				for(int z = 0; z < depth; z++)
-					for(Asset a : getAssetList(x, y, z))
-						a.setupAsset();
+		for(Asset a : getAssetList(0, 0, 0, width-0.0001f, height-0.0001f, depth-0.0001f))
+			a.setupAsset();
 	}
 
 	public void walkAction(int prevX, int prevY, int x, int y, int z, Entity e) {

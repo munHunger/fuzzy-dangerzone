@@ -1,13 +1,10 @@
 package gameLogic;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 import levelUtils.Asset;
 import levelUtils.Level;
 import utilities.Globals;
-import utilities.Invoke;
-import utilities.InvokeWrapper;
 import graphics.Graphics3D;
 
 public class Main {
@@ -31,18 +28,11 @@ public class Main {
 		g.getCamera().setEntityCameraLock(gordon);
 		
 		Asset barrel = Asset.loadAsset("res/assets/Misc/Barrel.asset");
-		Asset sand = Asset.loadAsset("res/assets/GroundTiles/Sand.asset");
+		barrel.setPos(5, 5, 0);
+		Globals.activeLevel.addAsset(barrel);
 		
-		for(int x = 0; x < Globals.activeLevel.getWidth(); x++)
-			for(int y = 0; y < Globals.activeLevel.getHeight(); y++)
-				Globals.activeLevel.addAsset(x, y, 0, sand);
-
-		Globals.activeLevel.addAsset(3, 2, 0, barrel);
-		Globals.activeLevel.addAsset(3, 3, 1, barrel);
-		Globals.activeLevel.addAsset(3, 4, 1, barrel);
-		Globals.activeLevel.addAsset(3, 5, 0, barrel);
-		Globals.activeLevel.saveLevel();
-		g.start();
+		Level level = Globals.activeLevel;
+		g.start(null);
 	}
 	
 	public static void main(String args[]){

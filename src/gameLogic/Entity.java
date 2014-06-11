@@ -25,10 +25,12 @@ public class Entity implements Serializable{
 
 	private float xPos;
 	private float yPos;
+	private float zPos;
 	private float prevxPos;
 	private float prevyPos;
 	private float zRot;
-	private float zPos;
+	private float xLargeScale, yLargeScale, zLargeScale;
+	private float xSmallScale, ySmallScale, zSmallScale;
 	private ArrayList<Asset> assets = new ArrayList<>();
 
 	private String entityName;
@@ -38,6 +40,28 @@ public class Entity implements Serializable{
 			Asset a = Asset.loadAsset(assetName);
 			assets.add(a);
 			a.setupAsset();
+		}
+		xLargeScale = 0f;
+		yLargeScale = 0f;
+		zLargeScale = 0f;
+		xSmallScale = 0f;
+		ySmallScale = 0f;
+		zSmallScale = 0f;
+		for(Asset a : assets){
+			if(a.getXLargeScale() > xLargeScale)
+				xLargeScale = a.getXLargeScale();
+			if(a.getXSmallScale() < xSmallScale)
+				xSmallScale = a.getXSmallScale();
+
+			if(a.getYLargeScale() > yLargeScale)
+				yLargeScale = a.getYLargeScale();
+			if(a.getYSmallScale() < ySmallScale)
+				ySmallScale = a.getYSmallScale();
+
+			if(a.getZLargeScale() > zLargeScale)
+				zLargeScale = a.getZLargeScale();
+			if(a.getZSmallScale() < zSmallScale)
+				zSmallScale = a.getZSmallScale();
 		}
 	}
 	
@@ -59,8 +83,28 @@ public class Entity implements Serializable{
 	public void setzPos(float zPos) {
 		this.zPos = zPos;
 	}
+
+	public float getXLargeScale(){
+		return xLargeScale;
+	}
+	public float getYLargeScale(){
+		return yLargeScale;
+	}
+	public float getZLargeScale(){
+		return zLargeScale;
+	}
+	public float getXSmallScale(){
+		return xSmallScale;
+	}
+	public float getYSmallScale(){
+		return ySmallScale;
+	}
+	public float getZSmallScale(){
+		return zSmallScale;
+	}
+	
 	public boolean setPos(float x, float y){
-		if(!Globals.activeLevel.isWalkable((int)x, (int)y, (int)zPos))
+		if(!Globals.activeLevel.isWalkable(x+xSmallScale, y+ySmallScale, zPos+zSmallScale, Math.abs(xSmallScale-xLargeScale), Math.abs(ySmallScale-yLargeScale), Math.abs(zSmallScale-zLargeScale)))
 			return false;
 		prevxPos = xPos;
 		prevyPos = yPos;

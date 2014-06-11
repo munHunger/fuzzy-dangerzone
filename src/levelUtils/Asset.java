@@ -10,7 +10,6 @@ import static org.lwjgl.opengl.GL11.glGenLists;
 import static org.lwjgl.opengl.GL11.glNewList;
 import static org.lwjgl.opengl.GL11.glNormal3f;
 import static org.lwjgl.opengl.GL11.glVertex3f;
-import gameLogic.Entity;
 import graphics.utilities.Face;
 import graphics.utilities.Model;
 import graphics.utilities.ModelPart;
@@ -27,7 +26,6 @@ import java.io.Serializable;
 
 import org.lwjgl.util.vector.Vector3f;
 
-import utilities.Invoke;
 
 /**
  * Asset is an object in the game that have a visual property in form of a 3d Model.
@@ -44,6 +42,10 @@ public class Asset implements Serializable{
 	private Model model;
 	private String assetName;
 	private float zRot;
+	
+	private float xPos, yPos, zPos;
+	private float xLargeScale, yLargeScale, zLargeScale;
+	private float xSmallScale, ySmallScale, zSmallScale;
 	
 	private int health;
 	public String onWalkOn;
@@ -98,11 +100,70 @@ public class Asset implements Serializable{
 		//modelListHandle = setupModelList(assetName + ".obj");
 	}
 	
+	public void setPos(float x, float y, float z){
+		xPos = x;
+		yPos = y;
+		zPos = z;
+	}
+
+	public float getX(){
+		return xPos;
+	}
+	public float getY(){
+		return yPos;
+	}
+	public float getZ(){
+		return zPos;
+	}
+	public float getXLargeScale(){
+		return xLargeScale;
+	}
+	public float getYLargeScale(){
+		return yLargeScale;
+	}
+	public float getZLargeScale(){
+		return zLargeScale;
+	}
+	public float getXSmallScale(){
+		return xSmallScale;
+	}
+	public float getYSmallScale(){
+		return ySmallScale;
+	}
+	public float getZSmallScale(){
+		return zSmallScale;
+	}
+	
 	public void loadModel(String modelName, String mtlPath){
 		try {
 			model = OBJLoader.loadModel(new File(modelName), new File(mtlPath));
 			model.setModelName(modelName);
 			model.setMtlPath(mtlPath);
+			xLargeScale = 0f;
+			yLargeScale = 0f;
+			zLargeScale = 0f;
+			xSmallScale = 0f;
+			ySmallScale = 0f;
+			zSmallScale = 0f;
+			xPos = 0f;
+			yPos = 0f;
+			zPos = 0f;
+			for(Vector3f v : model.getVerticies()){
+				if(v.x > xLargeScale)
+					xLargeScale = v.x;
+				if(v.x < xSmallScale)
+					xSmallScale = v.x;
+
+				if(v.y > yLargeScale)
+					yLargeScale = v.y;
+				if(v.y < ySmallScale)
+					ySmallScale = v.y;
+
+				if(v.z > zLargeScale)
+					zLargeScale = v.z;
+				if(v.z < zSmallScale)
+					zSmallScale = v.z;
+			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -130,36 +191,28 @@ public class Asset implements Serializable{
 		modelListHandle = glGenLists(1);
 		glNewList(modelListHandle, GL_COMPILE);
 		{
-			try {
-				model = OBJLoader.loadModel(new File(modelName), new File(mtlPath));
-				model.setModelName(modelName);
-				model.setMtlPath(mtlPath);
-				for(ModelPart modelPart : model.getModelParts()){
-					Vector3f color = modelPart.getColor();
-					glColor3f(color.x, color.y, color.z);
-					glBegin(GL_TRIANGLES);
-					for (Face face : modelPart.getFaces()) {
-						Vector3f n1 = model.getNormals().get((int)(face.getNormals().x - 1));
-						glNormal3f(n1.x, n1.y, n1.z);
-						Vector3f v1 = model.getVerticies().get((int)(face.getVerticies().x - 1));
-						glVertex3f(v1.x, v1.y, v1.z);
+			loadModel(modelName, mtlPath);
+			for(ModelPart modelPart : model.getModelParts()){
+				Vector3f color = modelPart.getColor();
+				glColor3f(color.x, color.y, color.z);
+				glBegin(GL_TRIANGLES);
+				for (Face face : modelPart.getFaces()) {
+					Vector3f n1 = model.getNormals().get((int)(face.getNormals().x - 1));
+					glNormal3f(n1.x, n1.y, n1.z);
+					Vector3f v1 = model.getVerticies().get((int)(face.getVerticies().x - 1));
+					glVertex3f(v1.x, v1.y, v1.z);
 
-						Vector3f n2 = model.getNormals().get((int)(face.getNormals().y - 1));
-						glNormal3f(n2.x, n2.y, n2.z);
-						Vector3f v2 = model.getVerticies().get((int)(face.getVerticies().y - 1));
-						glVertex3f(v2.x, v2.y, v2.z);
+					Vector3f n2 = model.getNormals().get((int)(face.getNormals().y - 1));
+					glNormal3f(n2.x, n2.y, n2.z);
+					Vector3f v2 = model.getVerticies().get((int)(face.getVerticies().y - 1));
+					glVertex3f(v2.x, v2.y, v2.z);
 
-						Vector3f n3 = model.getNormals().get((int)(face.getNormals().z - 1));
-						glNormal3f(n3.x, n3.y, n3.z);
-						Vector3f v3 = model.getVerticies().get((int)(face.getVerticies().z - 1));
-						glVertex3f(v3.x, v3.y, v3.z);
-					}
-					glEnd();
+					Vector3f n3 = model.getNormals().get((int)(face.getNormals().z - 1));
+					glNormal3f(n3.x, n3.y, n3.z);
+					Vector3f v3 = model.getVerticies().get((int)(face.getVerticies().z - 1));
+					glVertex3f(v3.x, v3.y, v3.z);
 				}
-			} 
-			catch (FileNotFoundException e) {
-				e.printStackTrace();
-				System.exit(0);
+				glEnd();
 			}
 		}
 		glEndList();

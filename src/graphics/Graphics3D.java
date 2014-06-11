@@ -7,6 +7,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.HashMap;
+import java.util.concurrent.Callable;
 
 import javax.imageio.ImageIO;
 
@@ -31,7 +32,6 @@ import utilities.Globals;
  */
 public class Graphics3D {
 	private Camera camera;
-	private float size = 1.0f;
 
 	/**
 	 * This is all that is needed.<br />
@@ -47,7 +47,7 @@ public class Graphics3D {
 		setupLighting();
 	}
 	
-	public void start(){
+	public void start(Callable<Integer> callback){
 		glMatrixMode(GL_MODELVIEW);
 		long lastTime = 0;
 		updateLight(GL_LIGHT1, camera.getPosition(), new Vector3f(0.3f, 0.35f, 0.45f));
@@ -60,7 +60,8 @@ public class Graphics3D {
 			glLoadIdentity();
 			camera.applyPerspective();
 			camera.processKeyboardInput(lastTime*0.01f);
-			camera.passMouseInput();
+			camera.processMouseInput(1f);
+			//camera.passMouseInput();
 			camera.applyTranslations();
 			
 			render();
@@ -70,7 +71,17 @@ public class Graphics3D {
 			lastTime = System.currentTimeMillis() - time;
 			glPopMatrix();
 			Display.update();
+			
+			if(callback != null){
+				try {
+					callback.call();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
+		System.exit(0);
 	}
 
 	/**
@@ -102,16 +113,73 @@ public class Graphics3D {
 	 */
 	private void render() {
 		Level level = Globals.activeLevel;
-		for(int x = 0; x < level.getWidth(); x++)
-			for(int y = 0; y < level.getHeight(); y++)
-				for(int z = 0; z < level.getDepth(); z++)
-					for(Asset a: level.getAssetList(x, y, z))
-						renderModel(a.getModelListHandle(), new Vector3f(x*size, y*size, z*size), new Vector3f(0.0f, 0.0f, a.getzRot()), new Vector3f(1.0f, 1.0f, 1.0f));
-		for(Entity e : Globals.entities)
+		drawBoundingBox(0, 0, 0, level.getWidth(), level.getHeight(), level.getDepth());
+		Vector3f cameraPos = new Vector3f();
+		camera.getPosition().negate(cameraPos);
+		float x = cameraPos.x;
+		float y = cameraPos.y;
+		float z = 0;
+		for(Asset a: level.getAssetList(0, 0, 0, level.getWidth()-0.001f, level.getHeight()-0.001f, level.getDepth()-0.001f)){
+			drawBoundingBox(a.getX()+a.getXSmallScale(), a.getY()+a.getYSmallScale(), a.getZ()+a.getZSmallScale(), 
+					a.getX()+a.getXLargeScale(), a.getY()+a.getYLargeScale(), a.getZ()+a.getZLargeScale());
+			renderModel(a.getModelListHandle(), new Vector3f(a.getX(), a.getY(), a.getZ()), new Vector3f(0.0f, 0.0f, a.getzRot()), new Vector3f(1.0f, 1.0f, 1.0f));
+		}
+		for(Entity e : Globals.entities){
+			drawBoundingBox(e.getxPos()+e.getXSmallScale(), e.getyPos()+e.getYSmallScale(), e.getzPos()+e.getZSmallScale(), 
+					e.getxPos()+e.getXLargeScale(), e.getyPos()+e.getYLargeScale(), e.getzPos()+e.getZLargeScale());
 			for(Asset a : e.getAssets())
 				renderModel(a.getModelListHandle(), new Vector3f(e.getxPos(), e.getyPos(), e.getzPos()), e.getRotation(), new Vector3f(1.0f, 1.0f, 1.0f));
+		}
 	}
 
+	private void drawBoundingBox(float x, float y, float z, float xScale, float yScale, float zScale){
+		glLineWidth(5);
+		glBegin(GL_LINES);{ //Bounding box
+			{//Bottom
+				glColor3f(0, 10, 0);
+				glVertex3f(x, y, z);
+				glVertex3f(xScale, y, z);
+
+				glVertex3f(xScale, y, z);
+				glVertex3f(xScale, yScale, z);
+
+				glVertex3f(xScale, yScale, z);
+				glVertex3f(x, yScale, z);
+
+				glVertex3f(x, yScale, z);
+				glVertex3f(x, y, z);
+			}
+			{//Top
+				glColor3f(0, 0, 10);
+				glVertex3f(x, y, zScale);
+				glVertex3f(xScale, y, zScale);
+
+				glVertex3f(xScale, y, zScale);
+				glVertex3f(xScale, yScale, zScale);
+
+				glVertex3f(xScale, yScale, zScale);
+				glVertex3f(x, yScale, zScale);
+
+				glVertex3f(x, yScale, zScale);
+				glVertex3f(x, y, zScale);
+			}
+			{//Sides
+				glColor3f(10, 0, 0);
+				glVertex3f(x, y, z);
+				glVertex3f(x, y, zScale);
+
+				glVertex3f(xScale, y, z);
+				glVertex3f(xScale, y, zScale);
+
+				glVertex3f(x, yScale, z);
+				glVertex3f(x, yScale, zScale);
+
+				glVertex3f(xScale, yScale, z);
+				glVertex3f(xScale, yScale, zScale);
+			}
+		}glEnd();
+	}
+	
 	/**
 	 * Updates the position and color of a light
 	 * @param light the light to update, this should be GL_LIGHTx, where x=0-9
@@ -256,6 +324,7 @@ public class Graphics3D {
 	 * @return ByteBuffer of the image
 	 * @throws IOException
 	 */
+	@SuppressWarnings("unused")
 	private ByteBuffer loadIcon(String filename) throws IOException {
 		BufferedImage image = ImageIO.read(new File(filename)); // load image
 		// convert image to byte array
