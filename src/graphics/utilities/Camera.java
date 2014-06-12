@@ -76,8 +76,8 @@ public class Camera {
 		if(entityCameraLock != null){
 			Vector3f lockPos = new Vector3f();
 			position.negate(lockPos);
-			if(!entityCameraLock.setPos(lockPos.x, lockPos.y))
-				position = oldPos;
+			if(!entityCameraLock.setPos(speedModifier));//lockPos.x, lockPos.y))
+				new Vector3f(entityCameraLock.getxPos(), entityCameraLock.getyPos(), entityCameraLock.getzPos()+7f).negate(position);
 		}
 	} 
 	
@@ -88,21 +88,23 @@ public class Camera {
 	}
 	
 	public void processMouseInput(float speedModifier){
-		int dX = (int) (Mouse.getDX()*speedModifier);
-		int dY = (int) (Mouse.getDY()*speedModifier);
-		if(Math.abs(dX) > 10)
-			dX = 0;
-		if(Math.abs(dY) > 10)
-			dY = 0;
-		roll += dX;
-		pitch -= dY;
-
-        if (Mouse.isButtonDown(0)) {
-            Mouse.setGrabbed(true);
-        } 
-        else if (Mouse.isButtonDown(1)) {
-            Mouse.setGrabbed(false);
-        }
+		if(entityCameraLock == null){
+			int dX = (int) (Mouse.getDX()*speedModifier);
+			int dY = (int) (Mouse.getDY()*speedModifier);
+			if(Math.abs(dX) > 10)
+				dX = 0;
+			if(Math.abs(dY) > 10)
+				dY = 0;
+			roll += dX;
+			pitch -= dY;
+	
+	        if (Mouse.isButtonDown(0)) {
+	            Mouse.setGrabbed(true);
+	        } 
+	        else if (Mouse.isButtonDown(1)) {
+	            Mouse.setGrabbed(false);
+	        }
+		}
 	}
 	
 	/**

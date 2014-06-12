@@ -1,5 +1,3 @@
-/gameLogic
-/graphics
-/utilities
-/testCases
 /levelUtils
+/graphics
+/gameLogic

@@ -32,7 +32,7 @@ import utilities.Globals;
  */
 public class Graphics3D {
 	private Camera camera;
-
+	public boolean debug = false;
 	/**
 	 * This is all that is needed.<br />
 	 * Everything is dependant on Globals, so make sure to setup Globals before creating Graphics3D object or it will not work.<br />
@@ -61,7 +61,7 @@ public class Graphics3D {
 			camera.applyPerspective();
 			camera.processKeyboardInput(lastTime*0.01f);
 			camera.processMouseInput(1f);
-			//camera.passMouseInput();
+			camera.passMouseInput();
 			camera.applyTranslations();
 			
 			render();
@@ -113,22 +113,28 @@ public class Graphics3D {
 	 */
 	private void render() {
 		Level level = Globals.activeLevel;
-		drawBoundingBox(0, 0, 0, level.getWidth(), level.getHeight(), level.getDepth());
+		if(debug)
+			drawBoundingBox(0, 0, 0, level.getWidth(), level.getHeight(), level.getDepth());
 		Vector3f cameraPos = new Vector3f();
 		camera.getPosition().negate(cameraPos);
 		float x = cameraPos.x;
 		float y = cameraPos.y;
 		float z = 0;
 		for(Asset a: level.getAssetList(0, 0, 0, level.getWidth()-0.001f, level.getHeight()-0.001f, level.getDepth()-0.001f)){
-			drawBoundingBox(a.getX()+a.getXSmallScale(), a.getY()+a.getYSmallScale(), a.getZ()+a.getZSmallScale(), 
+			if(debug)
+				drawBoundingBox(a.getX()+a.getXSmallScale(), a.getY()+a.getYSmallScale(), a.getZ()+a.getZSmallScale(), 
 					a.getX()+a.getXLargeScale(), a.getY()+a.getYLargeScale(), a.getZ()+a.getZLargeScale());
 			renderModel(a.getModelListHandle(), new Vector3f(a.getX(), a.getY(), a.getZ()), new Vector3f(0.0f, 0.0f, a.getzRot()), new Vector3f(1.0f, 1.0f, 1.0f));
 		}
 		for(Entity e : Globals.entities){
-			drawBoundingBox(e.getxPos()+e.getXSmallScale(), e.getyPos()+e.getYSmallScale(), e.getzPos()+e.getZSmallScale(), 
+			if(debug)
+				drawBoundingBox(e.getxPos()+e.getXSmallScale(), e.getyPos()+e.getYSmallScale(), e.getzPos()+e.getZSmallScale(), 
 					e.getxPos()+e.getXLargeScale(), e.getyPos()+e.getYLargeScale(), e.getzPos()+e.getZLargeScale());
-			for(Asset a : e.getAssets())
-				renderModel(a.getModelListHandle(), new Vector3f(e.getxPos(), e.getyPos(), e.getzPos()), e.getRotation(), new Vector3f(1.0f, 1.0f, 1.0f));
+			for(Asset a : e.getAssets()){
+				Vector3f rotation = new Vector3f();
+				Vector3f.add(e.getRotation(), new Vector3f(0f,0f,a.getzRot()), rotation);
+				renderModel(a.getModelListHandle(), new Vector3f(e.getxPos(), e.getyPos(), e.getzPos()), rotation, new Vector3f(1.0f, 1.0f, 1.0f));
+			}
 		}
 	}
 

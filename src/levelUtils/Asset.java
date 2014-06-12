@@ -43,7 +43,9 @@ public class Asset implements Serializable{
 	private String assetName;
 	private float zRot;
 	
-	private float xPos, yPos, zPos;
+	private float xPos = 0;
+	private float yPos = 0;
+	private float zPos = 0;
 	private float xLargeScale, yLargeScale, zLargeScale;
 	private float xSmallScale, ySmallScale, zSmallScale;
 	
@@ -145,9 +147,6 @@ public class Asset implements Serializable{
 			xSmallScale = 0f;
 			ySmallScale = 0f;
 			zSmallScale = 0f;
-			xPos = 0f;
-			yPos = 0f;
-			zPos = 0f;
 			for(Vector3f v : model.getVerticies()){
 				if(v.x > xLargeScale)
 					xLargeScale = v.x;

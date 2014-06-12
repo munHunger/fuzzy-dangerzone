@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 import levelUtils.Asset;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector3f;
 
 import utilities.Globals;
@@ -41,6 +42,10 @@ public class Entity implements Serializable{
 			assets.add(a);
 			a.setupAsset();
 		}
+		calculateBoundingBox();
+	}
+	
+	public void calculateBoundingBox(){
 		xLargeScale = 0f;
 		yLargeScale = 0f;
 		zLargeScale = 0f;
@@ -83,6 +88,9 @@ public class Entity implements Serializable{
 	public void setzPos(float zPos) {
 		this.zPos = zPos;
 	}
+	public void setzRot(float rot){
+		this.zRot = rot;
+	}
 
 	public float getXLargeScale(){
 		return xLargeScale;
@@ -113,6 +121,28 @@ public class Entity implements Serializable{
 		Globals.activeLevel.walkAction((int)prevxPos, (int)prevyPos, (int)x, (int)y, (int)zPos, this);
 		if(prevxPos != xPos || prevyPos != yPos)
 			zRot = (float) Math.toDegrees(Math.atan2(xPos-prevxPos, prevyPos-yPos));
+		return true;
+	}
+
+	public boolean setPos(float speedModifier) {
+		float x = this.xPos;
+		float y = this.yPos;
+		float z = this.zPos;
+		if(Keyboard.isKeyDown(Keyboard.KEY_W))
+			x -= speedModifier;
+		if(Keyboard.isKeyDown(Keyboard.KEY_S))
+			x += speedModifier;
+		if(Keyboard.isKeyDown(Keyboard.KEY_A))
+			y -= speedModifier;
+		if(Keyboard.isKeyDown(Keyboard.KEY_D))
+			y += speedModifier;
+
+		if(!Globals.activeLevel.isWalkable(x+xSmallScale, y+ySmallScale, z+zSmallScale, Math.abs(xSmallScale-xLargeScale), Math.abs(ySmallScale-yLargeScale), Math.abs(zSmallScale-zLargeScale)))
+			return false;
+
+		this.xPos = x;
+		this.yPos = y;
+		this.zPos = z;
 		return true;
 	}
 
@@ -175,5 +205,4 @@ public class Entity implements Serializable{
 			zRot = (float) Math.toDegrees(Math.atan2(x-Globals.screenWidth/2, Globals.screenHeight/2-y))+90;
 		}
 	}
-
 }
