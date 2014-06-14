@@ -50,7 +50,12 @@ public class Level implements Serializable{
 	
 	public boolean isWalkable(float x, float y, float z, float xScale, float yScale, float zScale){
 		List<Asset> l = mapAssets.query(x, y, z, xScale, yScale, zScale);
-		return l != null && l.size() == 0;
+		if(l == null)
+			return false;
+		for(Asset a : l)
+			if(!a.isWalkable())
+				return false;
+		return true;
 	}
 	
 	public ArrayList<Asset> getAssetList(float x, float y, float z, float xScale, float yScale, float zScale){
@@ -143,5 +148,9 @@ public class Level implements Serializable{
 			if(a.onWalkOn != null)
 				a.onWalkOn.call(e);
 		*/
+	}
+
+	public void setLevelLocation(String levelLocation) {
+		this.levelLocation = levelLocation;
 	}
 }

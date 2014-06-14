@@ -103,16 +103,16 @@ public class AssetManager extends JFrame{
 				    int returnVal = chooser.showSaveDialog(new JFrame());
 				    if(returnVal == JFileChooser.APPROVE_OPTION) {
 				       try {
-						ObjectOutputStream outStream = new ObjectOutputStream(new FileOutputStream(chooser.getSelectedFile()));
-						outStream.writeObject(assets);
-						outStream.close();
-					} catch (FileNotFoundException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
+							ObjectOutputStream outStream = new ObjectOutputStream(new FileOutputStream(chooser.getSelectedFile()));
+							outStream.writeObject(assets);
+							outStream.close();
+						} catch (FileNotFoundException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 				    }
 				}
 			});

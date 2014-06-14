@@ -1,8 +1,16 @@
 package levelUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
+
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.lwjgl.input.Keyboard;
 
@@ -47,8 +55,25 @@ public class LevelCreator{
 				}
 			}
 			if(Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) && Keyboard.isKeyDown(Keyboard.KEY_S)){
-				System.out.println("Saved Level");
-				Globals.activeLevel.saveLevel();
+				JFileChooser chooser = new JFileChooser();
+				File f = new File("res/");
+				chooser.setCurrentDirectory(f);
+			    int returnVal = chooser.showSaveDialog(new JFrame());
+			    if(returnVal == JFileChooser.APPROVE_OPTION) {
+			    	Globals.activeLevel.setLevelLocation(chooser.getSelectedFile().getAbsolutePath());
+			    	Globals.activeLevel.saveLevel();
+			    }
+			}
+			if(Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) && Keyboard.isKeyDown(Keyboard.KEY_O)){
+				JFileChooser chooser = new JFileChooser();
+				File f = new File("res/");
+				chooser.setCurrentDirectory(f);
+				FileNameExtensionFilter filter = new FileNameExtensionFilter(".map", ".map");
+				chooser.setFileFilter(filter);
+			    int returnVal = chooser.showOpenDialog(new JFrame());
+			    if(returnVal == JFileChooser.APPROVE_OPTION) {
+			    	Globals.activeLevel = Level.loadLevel(chooser.getSelectedFile().getAbsolutePath());
+			    }
 			}
 			
 			if(snap){
