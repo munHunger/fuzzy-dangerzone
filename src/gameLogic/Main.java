@@ -13,6 +13,10 @@ public class Main {
 		Globals.activeLevel = Level.loadLevel("res/maps/levelCreator.map");
 		AssetFunctions.initFunctionMap();
 		
+		GameMaster gm = new GameMaster();
+		Thread t = new Thread(gm);
+		t.start();
+		
 		ArrayList<String> gordonAssetNames = new ArrayList<>();
 		gordonAssetNames.add("res/assets/Characters/Gordon/BipedLegs.asset");
 		gordonAssetNames.add("res/assets/Characters/Gordon/Cockpit.asset");

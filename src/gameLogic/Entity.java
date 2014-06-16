@@ -144,6 +144,7 @@ public class Entity implements Serializable{
 		this.xPos = x;
 		this.yPos = y;
 		this.zPos = z;
+
 		return true;
 	}
 
@@ -204,6 +205,13 @@ public class Entity implements Serializable{
 	public void action(boolean leftButtonDown, boolean rightButtonDown, int x, int y) {
 		if(leftButtonDown){
 			zRot = (float) Math.toDegrees(Math.atan2(x-Globals.screenWidth/2, Globals.screenHeight/2-y))+90;
+			Bullet bullet = new Bullet(xPos, yPos, zPos, 1.5f, 1.5f, 0f);
+			Globals.entities.add(bullet);
+			GameMaster.entities.add(bullet);
 		}
+	}
+	
+	public void step(){
+		
 	}
 }
