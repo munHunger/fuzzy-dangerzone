@@ -11,6 +11,8 @@ public class AssetFunctions {
 	private static HashMap<String, Invoke<Boolean, Entity>> functionMap = new HashMap<>();
 	
 	public static Boolean callFunction(String key, Entity e){
+		if(!functionMap.containsKey(key))
+			return false;
 		Invoke<Boolean, Entity> fun = functionMap.get(key);
 		return fun.call(e);
 	}

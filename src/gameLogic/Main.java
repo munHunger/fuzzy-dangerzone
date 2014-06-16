@@ -1,6 +1,8 @@
 package gameLogic;
 
 import java.util.ArrayList;
+
+import levelUtils.AssetFunctions;
 import levelUtils.Level;
 import utilities.Globals;
 import graphics.Graphics3D;
@@ -9,6 +11,7 @@ public class Main {
 	public Main(){
 		Graphics3D g = new Graphics3D();
 		Globals.activeLevel = Level.loadLevel("res/maps/levelCreator.map");
+		AssetFunctions.initFunctionMap();
 		
 		ArrayList<String> gordonAssetNames = new ArrayList<>();
 		gordonAssetNames.add("res/assets/Characters/Gordon/BipedLegs.asset");

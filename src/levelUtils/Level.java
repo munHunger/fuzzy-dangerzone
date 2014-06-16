@@ -57,6 +57,15 @@ public class Level implements Serializable{
 				return false;
 		return true;
 	}
+
+	public void walkAction(float x, float y, float z, float xScale, float yScale, float zScale, Entity e) {
+		List<Asset> l = mapAssets.query(x, y, z, xScale, yScale, zScale);
+		if(l != null){
+			for(Asset a : l){
+				AssetFunctions.callFunction(a.onWalkOn, e);
+			}
+		}
+	}
 	
 	public ArrayList<Asset> getAssetList(float x, float y, float z, float xScale, float yScale, float zScale){
 		return (ArrayList<Asset>) mapAssets.query(x, y, z, xScale, yScale, zScale);
@@ -131,23 +140,6 @@ public class Level implements Serializable{
 	private void loadAssets() {
 		for(Asset a : getAssetList(0, 0, 0, width-0.0001f, height-0.0001f, depth-0.0001f))
 			a.setupAsset();
-	}
-
-	public void walkAction(int prevX, int prevY, int x, int y, int z, Entity e) {
-		/*
-		for(Asset a : mapAssets[x][y][z])
-			if(a.onWalkOn != null)
-				a.onWalkOn.call(e);
-		for(Asset a : mapAssets[x+1][y][z])
-			if(a.onWalkOn != null)
-				a.onWalkOn.call(e);
-		for(Asset a : mapAssets[x][y+1][z])
-			if(a.onWalkOn != null)
-				a.onWalkOn.call(e);
-		for(Asset a : mapAssets[x+1][y+1][z])
-			if(a.onWalkOn != null)
-				a.onWalkOn.call(e);
-		*/
 	}
 
 	public void setLevelLocation(String levelLocation) {

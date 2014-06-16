@@ -118,7 +118,7 @@ public class Entity implements Serializable{
 		prevyPos = yPos;
 		xPos = x;
 		yPos = y;
-		Globals.activeLevel.walkAction((int)prevxPos, (int)prevyPos, (int)x, (int)y, (int)zPos, this);
+		Globals.activeLevel.walkAction(x+xSmallScale, y+ySmallScale, zPos+zSmallScale, Math.abs(xSmallScale-xLargeScale), Math.abs(ySmallScale-yLargeScale), Math.abs(zSmallScale-zLargeScale), this);
 		if(prevxPos != xPos || prevyPos != yPos)
 			zRot = (float) Math.toDegrees(Math.atan2(xPos-prevxPos, prevyPos-yPos));
 		return true;
@@ -139,6 +139,7 @@ public class Entity implements Serializable{
 
 		if(!Globals.activeLevel.isWalkable(x+xSmallScale, y+ySmallScale, z+zSmallScale, Math.abs(xSmallScale-xLargeScale), Math.abs(ySmallScale-yLargeScale), Math.abs(zSmallScale-zLargeScale)))
 			return false;
+		Globals.activeLevel.walkAction(x+xSmallScale, y+ySmallScale, zPos+zSmallScale, Math.abs(xSmallScale-xLargeScale), Math.abs(ySmallScale-yLargeScale), Math.abs(zSmallScale-zLargeScale), this);
 
 		this.xPos = x;
 		this.yPos = y;
