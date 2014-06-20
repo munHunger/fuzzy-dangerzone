@@ -22,6 +22,7 @@ public class LevelCreator{
 	
 	private static Graphics3D g3d;
 	private AssetManager am;
+	float zRot = 0;
 	private Entity cursor = new Entity("cursor", new ArrayList<String>()){
 
 		private static final long serialVersionUID = 1L;
@@ -97,8 +98,9 @@ public class LevelCreator{
 				z -= speedModifier;
 			
 			if(Keyboard.isKeyDown(Keyboard.KEY_Q)){
+				zRot += 5;
 				for(Asset a : this.getAssets())
-					a.setzRot(a.getzRot()+5);
+					a.setzRot(zRot);
 				try {
 					Thread.sleep(200);
 				} catch (InterruptedException e) {
@@ -107,8 +109,8 @@ public class LevelCreator{
 				}
 			}
 			if(Keyboard.isKeyDown(Keyboard.KEY_E)){
+				zRot -= 5;
 				for(Asset a : this.getAssets()){
-					float zRot = a.getzRot()-5;
 					a.setzRot(zRot);
 				}
 				try {
@@ -162,6 +164,7 @@ public class LevelCreator{
 			if(cursor.getAssets().size() > 0){
 				Asset a = cursor.getAssets().get(0);
 				a.setPos(cursor.getxPos(), cursor.getyPos(), cursor.getzPos());
+				a.calculateBoundingBox();
 				Globals.activeLevel.addAsset(a);
 				
 				try {
@@ -174,6 +177,8 @@ public class LevelCreator{
 				File f = am.getSelectedAsset();
 				ArrayList<Asset> cursorAssets = new ArrayList<>();
 				cursorAssets.add(Asset.loadAsset(f.getAbsolutePath()));
+				for(Asset asset :cursorAssets)
+					asset.setzRot(zRot);
 				cursor.setAssets(cursorAssets);
 			}
 		}

@@ -136,33 +136,45 @@ public class Asset implements Serializable{
 		return zSmallScale;
 	}
 	
+	public void calculateBoundingBox(){
+		xLargeScale = 0f;
+		yLargeScale = 0f;
+		zLargeScale = 0f;
+		xSmallScale = 0f;
+		ySmallScale = 0f;
+		zSmallScale = 0f;
+		double zRot = (Math.toRadians(this.zRot));
+		for(Vector3f v : model.getVerticies()){
+			float r = (float) Math.sqrt(Math.pow(v.x, 2) + Math.pow(v.y, 2));
+			float vRot = (float) Math.atan2(v.y, v.x);
+			float x = (float) (r * Math.cos(vRot+zRot));
+			float y = (float) (r * Math.sin(vRot+zRot));
+			float z = v.z;
+			if(x > xLargeScale)
+				xLargeScale = x;
+			if(x < xSmallScale)
+				xSmallScale = x;
+
+			if(y > yLargeScale)
+				yLargeScale = y;
+			if(y < ySmallScale)
+				ySmallScale = y;
+
+			if(z > zLargeScale)
+				zLargeScale = z;
+			if(z < zSmallScale)
+				zSmallScale = z;
+		}
+		
+		
+	}
+	
 	public void loadModel(String modelName, String mtlPath){
 		try {
 			model = OBJLoader.loadModel(new File(modelName), new File(mtlPath));
 			model.setModelName(modelName);
 			model.setMtlPath(mtlPath);
-			xLargeScale = 0f;
-			yLargeScale = 0f;
-			zLargeScale = 0f;
-			xSmallScale = 0f;
-			ySmallScale = 0f;
-			zSmallScale = 0f;
-			for(Vector3f v : model.getVerticies()){
-				if(v.x > xLargeScale)
-					xLargeScale = v.x;
-				if(v.x < xSmallScale)
-					xSmallScale = v.x;
-
-				if(v.y > yLargeScale)
-					yLargeScale = v.y;
-				if(v.y < ySmallScale)
-					ySmallScale = v.y;
-
-				if(v.z > zLargeScale)
-					zLargeScale = v.z;
-				if(v.z < zSmallScale)
-					zSmallScale = v.z;
-			}
+			calculateBoundingBox();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
